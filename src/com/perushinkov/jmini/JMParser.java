@@ -8,9 +8,12 @@ import java.util.ArrayList;
  * Created by perushinkov on 10/25/14.
  */
 public class JMParser {
-    ArrayList<Token> tokens
-	public JMParser(ArrayList<Token> tokens) {
+    private ArrayList<Token> tokens;
+    private int position;
+
+    public JMParser(ArrayList<Token> tokens) {
         tokens = tokens;
+
     }
 
     public void parse() {
@@ -19,7 +22,9 @@ public class JMParser {
 
     // TODO: Goal = MainClass, { ClassDeclaration }, EOF;
     public void goal() {
-        //b
+        mainClass();
+        classDeclaration();
+        eof();
     }    
 
     // TODO: MainClass = "class", Identifier, "{", "public", "static", "void", "main", "(", "String", "[", "]", Identifier, ")", "{", Statement, "}", "}";
