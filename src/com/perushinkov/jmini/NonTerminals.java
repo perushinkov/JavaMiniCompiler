@@ -11,7 +11,8 @@ public enum NonTerminals {
     NT_GOAL {
         @Override
         boolean follows(List<Token> tokens, int position) {
-            return false;
+            // NOT USED;
+            return true;
         }
     },
     NT_MAINCLASS {

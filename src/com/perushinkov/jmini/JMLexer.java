@@ -34,7 +34,7 @@ public class JMLexer {
             do {
                 current = nextToken();
                 tokens.add(current);
-            } while (current.getType() != EOF);
+            } while (current.getType() != T_EOF);
         }
 
         return tokens;
@@ -44,62 +44,62 @@ public class JMLexer {
         Token current;
         do {
             if (ch == null) {
-                return newPiece(EOF);
+                return newPiece(T_EOF);
             }
             switch (ch) {
                 case '{':
                     ch = io.nextChar();
-                    return newPiece(LEFT_BRACE);
+                    return newPiece(T_LEFT_BRACE);
                 case '}':
                     ch = io.nextChar();
-                    return newPiece(RIGHT_BRACE);
+                    return newPiece(T_RIGHT_BRACE);
                 case '[':
                     ch = io.nextChar();
-                    return newPiece(LEFT_BRACKET);
+                    return newPiece(T_LEFT_BRACKET);
                 case ']':
                     ch = io.nextChar();
-                    return newPiece(RIGHT_BRACKET);
+                    return newPiece(T_RIGHT_BRACKET);
                 case '(':
                     ch = io.nextChar();
-                    return newPiece(LEFT_PARENTHESIS);
+                    return newPiece(T_LEFT_PARENTHESIS);
                 case ')':
                     ch = io.nextChar();
-                    return newPiece(RIGHT_PARENTHESIS);
+                    return newPiece(T_RIGHT_PARENTHESIS);
                 case ';':
                     ch = io.nextChar();
-                    return newPiece(SEMICOLON);
+                    return newPiece(T_SEMICOLON);
                 case ',':
                     ch = io.nextChar();
-                    return newPiece(COMMA);
+                    return newPiece(T_COMMA);
                 case '=':
                     ch = io.nextChar();
-                    return newPiece(EQUAL);
+                    return newPiece(T_EQUAL);
                 case '<':
                     ch = io.nextChar();
-                    return newPiece(LESS_THAN);
+                    return newPiece(T_LESS_THAN);
                 case '+':
                     ch = io.nextChar();
-                    return newPiece(PLUS);
+                    return newPiece(T_PLUS);
                 case '-':
                     ch = io.nextChar();
-                    return newPiece(MINUS);
+                    return newPiece(T_MINUS);
                 case '*':
                     ch = io.nextChar();
-                    return newPiece(MULT);
+                    return newPiece(T_MULT);
                 case '.':
                     ch = io.nextChar();
-                    return newPiece(DOT);
+                    return newPiece(T_DOT);
                 case '!':
                     ch = io.nextChar();
-                    return newPiece(NOT);
+                    return newPiece(T_NOT);
                 case '&':
                     ch = io.nextChar();
                     if (ch == '&') {
                         ch = io.nextChar();
-                        return newPiece(AND);
+                        return newPiece(T_AND);
                     } else {
                         errorMessages.put(ErrorCode.TOKEN_MISMATCH, new TokenPosition(io.getRow(), io.getCol(), tokens.size()));
-                        return newPiece(EOF);
+                        return newPiece(T_EOF);
                     }
                 default:
                     //case NUMBER
@@ -109,7 +109,7 @@ public class JMLexer {
                             sb.append(ch);
                             ch = io.nextChar();
                         } while(ch >= '0' && ch <= '9');
-                        current = newPiece(INT_CONST);
+                        current = newPiece(T_INT_CONST);
                         current.setValue(sb.toString());
                         return current;
                     }
@@ -127,7 +127,7 @@ public class JMLexer {
                                 return newPiece(tt);
                             }
                         }
-                        current = newPiece(ID);
+                        current = newPiece(T_ID);
                         current.setValue(identifier);
                         return current;
                     }
