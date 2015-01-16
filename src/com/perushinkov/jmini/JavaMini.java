@@ -40,7 +40,15 @@ public class JavaMini {
     }
 
     public static void main(String[] args) {
-        JavaMini example = new JavaMini(new File("factorial.java"));
+        new JavaMini(new File("resources/Factorial.java"));
+        new JavaMini(new File("resources/BinarySearch.java"));
+        new JavaMini(new File("resources/BinaryTree.java"));
+        JavaMini example = new JavaMini(new File("resources/BubbleSort.java"));
+        new JavaMini(new File("resources/LinearSearch.java"));
+        new JavaMini(new File("resources/LinkedList.java"));
+        new JavaMini(new File("resources/QuickSort.java"));
+        new JavaMini(new File("resources/TreeVisitor.java"));
+
 
         ArrayList<Token> alt = example.getLexer().getTokens();
         TreeMap<ErrorCode, TokenPosition> tm = example.getLexer().getErrorMessages();

@@ -28,10 +28,9 @@ public class TokenPosition {
 
     @Override
     public String toString() {
-        return "TokenPosition{" +
-                "row=" + row +
-                ", col=" + col +
-                ", tokenNumber=" + tokenNumber +
-                '}';
+        return "<row=" + row +
+                " col=" + col +
+                " tokenNumber=" + tokenNumber +
+                '>';
     }
 }

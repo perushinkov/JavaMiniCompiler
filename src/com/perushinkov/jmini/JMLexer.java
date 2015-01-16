@@ -42,11 +42,28 @@ public class JMLexer {
 
     private Token nextToken() throws Exception {
         Token current;
+        LEX_LOOP:
         do {
             if (ch == null) {
                 return newPiece(T_EOF);
             }
+
             switch (ch) {
+                case '/':
+                    ch = io.nextChar();
+                    if (ch == '/') {
+                        while (io.nextChar() != '\n');
+                        ch = io.nextChar();
+                        continue;
+                    } else if (ch == '*') {
+                        do {
+                            while (io.nextChar() != '*');
+                            if (io.nextChar() == '/') {
+                                ch = io.nextChar();
+                                continue LEX_LOOP;
+                            }
+                        } while (true);
+                    }
                 case '{':
                     ch = io.nextChar();
                     return newPiece(T_LEFT_BRACE);
@@ -114,13 +131,24 @@ public class JMLexer {
                         return current;
                     }
                     //case IDENTIFIER
-                    if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')) {
+                    if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || ch == '_') {
                         StringBuffer sb = new StringBuffer();
                         do {
                             sb.append(ch);
                             ch = io.nextChar();
-                        } while ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z'));
+                        } while ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || ch == '_' || (ch >= '0' && ch <= '9') );
                         String identifier = sb.toString();
+                        if (identifier.equals("System")) {
+                            String remaining = ".out.println";
+                            for (int i = 1; i < remaining.length(); i++) {
+                                ch = io.nextChar();
+                                if (ch != remaining.charAt(i)) {
+                                    throw new IllegalStateException();
+                                }
+                            }
+                            ch = io.nextChar();
+                            return newPiece(T_SYSOUT);
+                        }
                         for(TokenType tt: TokenType.values()) {
                             if(tt.getTerminalValue() == null) continue;
                             if(tt.getTerminalValue().equals(identifier)) {

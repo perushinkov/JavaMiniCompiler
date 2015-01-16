@@ -28,10 +28,14 @@ public class Token {
 
     @Override
     public String toString() {
-        return "Token{" +
+        return "<Token " +
                 "pos=" + pos +
-                ", type=" + type +
-                ", value='" + value + '\'' +
-                '}';
+                " type=" + type +
+                " value='" + value + '\'' +
+                '>';
+    }
+
+    public TokenPosition getPosition() {
+        return pos;
     }
 }
