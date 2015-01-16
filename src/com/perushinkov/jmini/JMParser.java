@@ -56,17 +56,15 @@ public class JMParser {
     private List<Token> tokens;
     private int position;
 
-    public List<String> getErrors() {
-        return errors;
-    }
-
     private List<String> errors;
 
     public JMParser(ArrayList<Token> tokens) {
         this.tokens = tokens;
         this.position = -1;
+        this.errors = new ArrayList<String>();
     }
     private void error(TokenType[] expected) {
+        if (position == tokens.size()) return;
         // Error message
         TokenPosition errLocation = tokens.get(position).getPosition();
         TokenType errType = tokens.get(position).getType();
@@ -83,7 +81,20 @@ public class JMParser {
         errors.add(sb.toString());
 
         // Basic error recovery
-        // TODO:
+
+        int j = 0;
+        OUTER_LOOP:
+        for (int i = position; i < tokens.size(); i++) {
+            for (j = 0; j < expected.length; j++) {
+                if (tokens.get(i).getType() == expected[j]) {
+                    position = i;
+                    break OUTER_LOOP;
+                }
+            }
+        }
+        if (tokens.get(position).getType() != expected[j]) {
+            position = tokens.size();
+        }
     }
     private void accept(TokenType tokenType) {
         Token token = nextToken();
@@ -110,6 +121,9 @@ public class JMParser {
         return tokens.get(position);
     }
 
+    public List<String> getErrors() {
+        return errors;
+    }
     /**
      * NONTERMINAL matchers start here:
      */
@@ -122,7 +136,7 @@ public class JMParser {
      */
     public void goal() {
         mainClass();
-        while (!follows(T_EOF)) {
+        while (follows(T_CLASS)) {
             classDeclaration();
         }
         eof();
@@ -178,11 +192,9 @@ public class JMParser {
             while (!follows(T_RIGHT_BRACE)) {
                 if (follows(T_PUBLIC)) {
                     methodDeclaration();
-                } else {
-                    // Because method declaration always starts with "public"
-                    // here it is easy to see this must be varDeclaration
+                } else if (follows(T_INT_TYPE) || follows(T_BOOLEAN_TYPE) || follows(T_ID)){
                     varDeclaration();
-                }
+                } else break; // ONLY DURING ERROR RECOVERY
             }
         accept(T_RIGHT_BRACE);
     }
@@ -225,9 +237,10 @@ public class JMParser {
                         (follows(T_ID)
                                 && tokens.get(position + 2).getType() == T_ID)) {
                     varDeclaration();
-                } else {
+                } else if (follows(T_IF) || follows(T_WHILE) || follows(T_SYSOUT) ||
+                        follows(T_LEFT_BRACE) || follows(T_ID)) {
                     statement();
-                }
+                } else break; // This happens only during error recovery
             }
             accept(T_RETURN);
             expression();
@@ -266,7 +279,7 @@ public class JMParser {
     public void statement() {
         if (follows(T_LEFT_BRACE)) { // "{", { Statement }, "}"
             accept(T_LEFT_BRACE);
-            while (!follows(T_RIGHT_BRACE)) {
+            while (follows(T_LEFT_BRACE) || follows(T_IF) || follows(T_WHILE) || follows(T_SYSOUT) || follows(T_ID)) {
                 statement();
             }
             accept(T_RIGHT_BRACE);

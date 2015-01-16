@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeMap;
 
 /**
@@ -40,28 +41,19 @@ public class JavaMini {
     }
 
     public static void main(String[] args) {
-        new JavaMini(new File("resources/Factorial.java"));
-        new JavaMini(new File("resources/BinarySearch.java"));
-        new JavaMini(new File("resources/BinaryTree.java"));
-        JavaMini example = new JavaMini(new File("resources/BubbleSort.java"));
-        new JavaMini(new File("resources/LinearSearch.java"));
-        new JavaMini(new File("resources/LinkedList.java"));
-        new JavaMini(new File("resources/QuickSort.java"));
-        new JavaMini(new File("resources/TreeVisitor.java"));
+        String[] inputFiles = new String[] {"Factorial", "BinarySearch", "BinaryTree",
+                "BubbleSort", "LinearSearch", "LinkedList", "QuickSort", "TreeVisitor"};
 
-
-        ArrayList<Token> alt = example.getLexer().getTokens();
-        TreeMap<ErrorCode, TokenPosition> tm = example.getLexer().getErrorMessages();
-
-        for(ErrorCode err: tm.keySet()) {
-            System.out.println(err.toString() + ":" + tm.get(err).toString());
+        for (String filename: inputFiles) {
+            JavaMini example = new JavaMini(new File("resources/" + filename + ".java"));
+            TreeMap<ErrorCode, TokenPosition> tm = example.getLexer().getErrorMessages();
+            for (ErrorCode err: tm.keySet()) {
+                System.out.println(err.toString() + ":" + tm.get(err).toString());
+            }
+            List<String> errorList = example.getParser().getErrors();
+            for (String error: errorList) {
+                System.out.println(error);
+            }
         }
-
-        for(Token t: alt) {
-            System.out.println(t.toString());
-        }
-
-        System.out.println("Working Directory = " +
-                System.getProperty("user.dir"));
     }
 }
